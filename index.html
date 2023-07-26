@@ -1,29 +1,239 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" href="styles/style.css"/>
-  <style>
-  
-     h1{font-size:30px}
-     body{background-color:#f0f8ff}
-     .entrada{border-radius:8px}
-     .botao{border-radius:8px;
-     border:solid 2px #f0f8ff;}
-  
-  </style>
-</head>
-</body>
-<script>
- const teste=function() {
-   alert("Funcionando!!!")
- }
+    <title>Conversor de Temperaturas</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <style>
+    
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
 
-</script>
-  <h1>
-    Digite Seu Nome:
-  </h1>
-  <input class="entrada" type="text" / >
-  <input class="botao" type="button" value="Clique Aqui" onclick="teste()">
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            color: #007BFF;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .conversion-select {
+            margin-top: 20px;
+        }
+
+        .show-calc-button {
+            margin-top: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #calculations {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #calculations h2 {
+            text-align: center;
+        }
+         
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Conversor de Temperaturas</h1>
+        </div>
+
+        <div class="input-container">
+            <label for="celsius">Celsius:</label>
+            <input type="number" id="celsius" oninput="convertTemperatures('celsius')" step="any">
+        </div>
+
+        <div class="input-container">
+            <label for="fahrenheit">Fahrenheit:</label>
+            <input type="number" id="fahrenheit" oninput="convertTemperatures('fahrenheit')" step="any">
+        </div>
+
+        <div class="input-container">
+            <label for="kelvin">Kelvin:</label>
+            <input type="number" id="kelvin" oninput="convertTemperatures('kelvin')" step="any">
+        </div>
+
+        <div class="variation-container">
+            <h2>Variação Térmica</h2>
+            <label for="before">Temperatura Antes:</label>
+            <input type="number" id="before" oninput="calculateVariation()" step="any">
+        </div>
+
+        <div class="variation-container">
+            <label for="after">Temperatura Depois:</label>
+            <input type="number" id="after" oninput="calculateVariation()" step="any">
+        </div>
+
+        <div class="input-container">
+            <label for="unit">Unidade:</label>
+            <select id="unit" onchange="calculateVariation()">
+                <option value="celsius">Celsius</option>
+                <option value="fahrenheit">Fahrenheit</option>
+                <option value="kelvin">Kelvin</option>
+            </select>
+        </div>
+
+        <div class="conversion-select">
+            <label for="conversion">Conversão:</label>
+            <select id="conversion" onchange="showSelectedConversion()">
+                <option value="celsiusToFahrenheit">Celsius para Fahrenheit</option>
+                <option value="celsiusToKelvin">Celsius para Kelvin</option>
+                <option value="fahrenheitToCelsius">Fahrenheit para Celsius</option>
+                <option value="fahrenheitToKelvin">Fahrenheit para Kelvin</option>
+                <option value="kelvinToCelsius">Kelvin para Celsius</option>
+                <option value="kelvinToFahrenheit">Kelvin para Fahrenheit</option>
+            </select>
+        </div>
+
+        <button class="show-calc-button" onclick="showCalculations()">Ver cálculos</button>
+
+        <div id="calculations">
+            <h2>Cálculos</h2>
+            <p id="selectedConversionCalculation"></p>
+        </div>
+
+        <div class="footer">
+            Desenvolvido por <a href="" target="_blank">Iarley Portugal</a>
+        </div>
+    </div>
+
+    <script>
+        let celsius = 0;
+        let fahrenheit = 0;
+        let kelvin = 0;
+
+        function convertTemperatures(selectedUnit) {
+            celsius = parseFloat(document.getElementById("celsius").value);
+            fahrenheit = parseFloat(document.getElementById("fahrenheit").value);
+            kelvin = parseFloat(document.getElementById("kelvin").value);
+
+            if (selectedUnit === "celsius") {
+                document.getElementById("fahrenheit").value = (celsius * 9/5) + 32;
+                document.getElementById("kelvin").value = celsius + 273.15;
+            } else if (selectedUnit === "fahrenheit") {
+                document.getElementById("celsius").value = (fahrenheit - 32) * 5/9;
+                document.getElementById("kelvin").value = (fahrenheit - 32) * 5/9 + 273.15;
+            } else if (selectedUnit === "kelvin") {
+                document.getElementById("celsius").value = kelvin - 273.15;
+                document.getElementById("fahrenheit").value = (kelvin - 273.15) * 9/5 + 32;
+            }
+        }
+
+        function calculateVariation() {
+            const before = parseFloat(document.getElementById("before").value);
+            const after = parseFloat(document.getElementById("after").value);
+            const unit = document.getElementById("unit").value;
+
+            if (!isNaN(before) && !isNaN(after)) {
+                let variation;
+
+                if (unit === "celsius") {
+                    variation = Math.abs(before - after);
+                } else if (unit === "fahrenheit") {
+                    variation = Math.abs((before - 32) * 5/9 - (after - 32) * 5/9);
+                } else if (unit === "kelvin") {
+                    variation = Math.abs(before - after);
+                }
+
+                document.getElementById("result").textContent = `Variação: ${variation.toFixed(2)} ${unit}`;
+            }
+        }
+
+        function showSelectedConversion() {
+            const selectedConversion = document.getElementById("conversion").value;
+
+            const allConversions = {
+                celsiusToFahrenheit: `Celsius para Fahrenheit: Tf = (Tc * 9/5) + 32\nTf = (${celsius} * 9/5) + 32\nTf = ${(celsius * 9/5) + 32}°F`,
+                celsiusToKelvin: `Celsius para Kelvin: Tk = Tc + 273.15\nTk = ${celsius} + 273.15\nTk = ${(celsius + 273.15).toFixed(2)}K`,
+                fahrenheitToCelsius: `Fahrenheit para Celsius: Tc = (Tf - 32) * 5/9\nTc = (${fahrenheit} - 32) * 5/9\nTc = ${((fahrenheit - 32) * 5/9).toFixed(2)}°C`,
+                fahrenheitToKelvin: `Fahrenheit para Kelvin: Tk = (Tf - 32) * 5/9 + 273.15\nTk = (${fahrenheit} - 32) * 5/9 + 273.15\nTk = ${((fahrenheit - 32) * 5/9 + 273.15).toFixed(2)}K`,
+                kelvinToCelsius: `Kelvin para Celsius: Tc = Tk - 273.15\nTc = ${kelvin} - 273.15\nTc = ${(kelvin - 273.15).toFixed(2)}°C`,
+                kelvinToFahrenheit: `Kelvin para Fahrenheit: Tf = (Tk - 273.15) * 9/5 + 32\nTf = (${kelvin} - 273.15) * 9/5 + 32\nTf = ${((kelvin - 273.15) * 9/5 + 32).toFixed(2)}°F`
+            };
+
+            document.getElementById("selectedConversionCalculation").textContent = allConversions[selectedConversion];
+        }
+
+        function showCalculations() {
+            const calculationsDiv = document.getElementById("calculations");
+            const selectedConversionCalculation = document.getElementById("selectedConversionCalculation");
+
+            if (calculationsDiv.style.display === "none") {
+                calculationsDiv.style.display = "block";
+                selectedConversionCalculation.style.display = "block";
+            } else {
+                calculationsDiv.style.display = "none";
+                selectedConversionCalculation.style.display = "none";
+            }
+        }
+    </script>
+</body>
 </html>
